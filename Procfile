@@ -1,1 +1,1 @@
-worker: quotebot
+worker: main
