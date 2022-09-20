@@ -169,5 +169,5 @@ func main() {
 	gr.POST("/login", Login)
 	gr.POST("/register", Register)
 
-	r.Run(os.Getenv("PORT"))
+	r.Run("0.0.0.0", os.Getenv("PORT"))
 }
