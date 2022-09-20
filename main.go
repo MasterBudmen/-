@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -48,7 +47,7 @@ type UserRegister struct {
 }
 
 func initDb() *sql.DB {
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", c_host, c_port, c_user, c_password, c_dbname)
+	connStr := os.Getenv("HEROKU_POSTGRESQL")
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
