@@ -47,7 +47,7 @@ type UserRegister struct {
 }
 
 func initDb() *sql.DB {
-	connStr := os.Getenv("HEROKU_POSTGRESQL")
+	connStr := os.Getenv("DATABASE_URL")
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
