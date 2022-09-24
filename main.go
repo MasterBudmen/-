@@ -45,6 +45,8 @@ func main() {
 	gr.GET("/app-check", AppCheck)
 	gr.GET("/db-check", DBCheck)
 
+	r.Static("/swaggerui/", "swaggerui")
+
 	//HEROKU
 	r.Run("0.0.0.0:" + os.Getenv("PORT"))
 	//LOCAL
