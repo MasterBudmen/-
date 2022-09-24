@@ -182,7 +182,7 @@
         "tags": [
           "Post"
         ],
-        "summary": "Установка лайка посту",
+        "summary": "Лайк поста",
         "requestBody": {
           "content": {
             "application/json": {
@@ -286,7 +286,7 @@
         },
         "responses": {
           "200": {
-            "description": "Успешное создание комментария"
+            "description": "Успешная установка лайка"
           },
           "400": {
             "description": "Не указано сообщение"
@@ -309,7 +309,7 @@
         "tags": [
           "Comment"
         ],
-        "summary": "Создание поста",
+        "summary": "Лайк комментария",
         "requestBody": {
           "content": {
             "application/json": {
@@ -322,7 +322,7 @@
         },
         "responses": {
           "200": {
-            "description": "Успешное создание поста"
+            "description": "Успешная установка лайка"
           },
           "400": {
             "description": "Не указано сообщение"
@@ -514,7 +514,7 @@
       "Comment_like": {
         "type": "object",
         "properties": {
-          "text": {
+          "comment_id": {
             "type": "string",
             "example": 1
           }
