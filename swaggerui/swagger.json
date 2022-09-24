@@ -340,7 +340,7 @@
         ]
       }
     },
-    "/comments{post_id}{limit}{offset}": {
+    "/comments": {
       "get": {
         "tags": [
           "Comment"
