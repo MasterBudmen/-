@@ -93,7 +93,7 @@
         }
       }
     },
-    "/users{limit}{offset}": {
+    "/users": {
       "get": {
         "tags": [
           "User"
@@ -102,22 +102,22 @@
         "parameters": [
           {
             "name": "limit",
-            "in": "path",
+            "in": "query",
             "description": "Ограничить количество выводимых пользователей",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string",
-              "example": "?limit=10"
+              "type": "integer",
+              "example": "10"
             }
           },
           {
             "name": "offset",
-            "in": "path",
+            "in": "query",
             "description": "Смещение выводимых пользователей",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string",
-              "example": "&offset=10"
+              "type": "integer",
+              "example": 0
             }
           }
         ],
@@ -213,7 +213,7 @@
         ]
       }
     },
-    "/posts{limit}{offset}": {
+    "/posts": {
       "get": {
         "tags": [
           "Post"
@@ -222,7 +222,7 @@
         "parameters": [
           {
             "name": "limit",
-            "in": "path",
+            "in": "query",
             "description": "Ограничить количество выводимых постов",
             "required": true,
             "schema": {
@@ -232,7 +232,7 @@
           },
           {
             "name": "offset",
-            "in": "path",
+            "in": "query",
             "description": "Смещение выводимых постов",
             "required": true,
             "schema": {
@@ -349,7 +349,7 @@
         "parameters": [
           {
             "name": "post_id",
-            "in": "path",
+            "in": "query",
             "description": "Выбрать пост",
             "required": true,
             "schema": {
@@ -359,9 +359,9 @@
           },
           {
             "name": "limit",
-            "in": "path",
+            "in": "query",
             "description": "Ограничить количество выводимых комментариев",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "example": 10
@@ -369,9 +369,9 @@
           },
           {
             "name": "offset",
-            "in": "path",
+            "in": "query",
             "description": "Смещение выводимых комментариев",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "example": 0
