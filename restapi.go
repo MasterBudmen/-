@@ -178,7 +178,7 @@ func GetComments(c *gin.Context) {
 
 		for rows.Next() {
 			var comment UserComment
-			if err := rows.Scan(&comment.Comment_id, &comment.Name, &comment.Post_id, &comment.Text); err != nil {
+			if err := rows.Scan(&comment.Comment_id, &comment.Post_id, &comment.Name, &comment.Text); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 				return
 			}
