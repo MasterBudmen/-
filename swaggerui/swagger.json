@@ -29,7 +29,7 @@
     }
   ],
   "paths": {
-    "/login": {
+    "/users/login": {
       "post": {
         "tags": [
           "User"
@@ -66,7 +66,7 @@
         }
       }
     },
-    "/register": {
+    "/users/register": {
       "post": {
         "tags": [
           "User"
@@ -141,7 +141,7 @@
         ]
       }
     },
-    "/post": {
+    "/posts/create": {
       "post": {
         "tags": [
           "Post"
@@ -177,7 +177,7 @@
         ]
       }
     },
-    "/post_like": {
+    "/posts/like": {
       "post": {
         "tags": [
           "Post"
@@ -268,7 +268,7 @@
         ]
       }
     },
-    "/comment": {
+    "/comments/create": {
       "post": {
         "tags": [
           "Comment"
@@ -304,7 +304,7 @@
         ]
       }
     },
-    "/comment_like": {
+    "/comments/like": {
       "post": {
         "tags": [
           "Comment"

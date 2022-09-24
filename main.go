@@ -28,19 +28,20 @@ func main() {
 
 	gr := r.Group("/api")
 
-	gr.POST("/register", Register)
-	gr.POST("/login", Login)
-	gr.POST("/tokencheck", TokenParse)
-
 	gr.GET("/users", GetUsers)
+	gr.POST("/users/register", Register)
+	gr.POST("/users/login", Login)
+
+	//gr.POST("/tokencheck", TokenParse)
+
 	gr.GET("/comments", GetComments)
 	gr.GET("/posts", GetPosts)
 
-	gr.POST("/post", Post)
-	gr.POST("/comment", Comment)
+	gr.POST("/posts/create", Post)
+	gr.POST("/comments/create", Comment)
 
-	gr.POST("/post_like", Like_Post)
-	gr.POST("/comment_like", Like_Comment)
+	gr.POST("/posts/like", Like_Post)
+	gr.POST("/comments/like", Like_Comment)
 
 	gr.GET("/app-check", AppCheck)
 	gr.GET("/db-check", DBCheck)
