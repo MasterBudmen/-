@@ -171,14 +171,14 @@ func GetComments(c *gin.Context) {
 			offset = "0"
 		}
 
-		rows, err := database.DB.Query("SELECT c.id, s.name, c.comment as text FROM dbo.comments c JOIN dbo.users s ON c.user_id = s.id WHERE c.post_id = $1 ORDER BY c.created_at DESC LIMIT $2 OFFSET $3", post_id, limit, offset)
+		rows, err := database.DB.Query("SELECT c.id, c.post_id, s.name, c.comment as text FROM dbo.comments c JOIN dbo.users s ON c.user_id = s.id WHERE c.post_id = $1 ORDER BY c.created_at DESC LIMIT $2 OFFSET $3", post_id, limit, offset)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		}
 
 		for rows.Next() {
 			var comment UserComment
-			if err := rows.Scan(&comment.Comment_id, &comment.Name, &comment.Text); err != nil {
+			if err := rows.Scan(&comment.Comment_id, &comment.Name, &comment.Post_id, &comment.Text); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 				return
 			}
