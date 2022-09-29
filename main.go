@@ -40,6 +40,8 @@ func main() {
 
 	gr := r.Group("/api")
 
+	gr.Use(CORSMiddleware())
+
 	gr.GET("/users", GetUsers)
 	gr.POST("/users/register", Register)
 	gr.POST("/users/login", Login)
@@ -65,8 +67,6 @@ func main() {
 
 	//config.AllowAllOrigins = true
 	//gr.Use(cors.New(config))
-
-	gr.Use(CORSMiddleware())
 
 	//HEROKU
 	r.Run("0.0.0.0:" + os.Getenv("PORT"))
