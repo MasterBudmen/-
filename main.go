@@ -49,6 +49,7 @@ func main() {
 
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://catsogramm.web.app", "https://catsogramm.web.app"}
+	config.AllowHeaders = []string{"access-Control-Allow-Headers", "Access-Control-Allow-Origin", "Content-Type", "Authorization"}
 
 	r.Use(cors.New(config))
 
