@@ -7,6 +7,7 @@ import (
 
 	database "main/database"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -46,8 +47,13 @@ func main() {
 
 	gr := r.Group("/api")
 
-	r.Use(CORSMiddleware())
-	gr.Use(CORSMiddleware())
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://catsogramm.web.app", "https://catsogramm.web.app"}
+
+	r.Use(cors.New(config))
+
+	//r.Use(CORSMiddleware())
+	//gr.Use(CORSMiddleware())
 
 	gr.GET("/users", GetUsers)
 	gr.POST("/users/register", Register)
@@ -68,12 +74,6 @@ func main() {
 	gr.GET("/db-check", DBCheck)
 
 	r.Static("/swaggerui/", "swaggerui")
-
-	//config := cors.DefaultConfig()
-	//config.AllowOrigins = []string{"http://catsogramm.web.app", "https://catsogramm.web.app"}
-
-	//config.AllowAllOrigins = true
-	//gr.Use(cors.New(config))
 
 	//HEROKU
 	r.Run("0.0.0.0:" + os.Getenv("PORT"))
