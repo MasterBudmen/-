@@ -7,7 +7,6 @@ import (
 
 	database "main/database"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -15,7 +14,7 @@ import (
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Origin", "https://catsogramm.web.app")
 		c.Header("Access-Control-Allow-Headers", "*")
 
 		/*
@@ -45,16 +44,9 @@ func main() {
 
 	r := gin.Default()
 
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://catsogramm.web.app", "https://catsogramm.web.app"}
-	config.AllowAllOrigins = true
-
-	r.Use(cors.New(config))
-
 	gr := r.Group("/api")
 
-	//r.Use(CORSMiddleware())
-	//gr.Use(CORSMiddleware())
+	r.Use(CORSMiddleware())
 
 	gr.GET("/users", GetUsers)
 	gr.POST("/users/register", Register)
