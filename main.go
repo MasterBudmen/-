@@ -14,7 +14,7 @@ import (
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		c.Header("Access-Control-Allow-Origin", "https://catsogramm.web.app")
+		c.Header("Access-Control-Allow-Origin", "https://catsogramm.web.app 	")
 		c.Header("Access-Control-Allow-Headers", "*")
 
 		/*
@@ -47,6 +47,7 @@ func main() {
 	gr := r.Group("/api")
 
 	r.Use(CORSMiddleware())
+	gr.Use(CORSMiddleware())
 
 	gr.GET("/users", GetUsers)
 	gr.POST("/users/register", Register)
