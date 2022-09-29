@@ -12,8 +12,20 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func GetUserIdByName(user User) int {
-	return 0
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://catsogramm.web.app")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
 }
 
 func main() {
@@ -27,7 +39,7 @@ func main() {
 
 	r := gin.Default()
 
-	gr := r.Group("/api")
+	gr := r.Group("/api", CORSMiddleware())
 
 	gr.GET("/users", GetUsers)
 	gr.POST("/users/register", Register)
@@ -51,6 +63,7 @@ func main() {
 
 	config := cors.DefaultConfig()
 	//config.AllowOrigins = []string{"http://catsogramm.web.app", "https://catsogramm.web.app"}
+
 	config.AllowAllOrigins = true
 	gr.Use(cors.New(config))
 	//HEROKU
