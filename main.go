@@ -17,9 +17,6 @@ func CORSMiddleware() gin.HandlerFunc {
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-Control-Allow-Headers", "*")
 
-		//c.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
-		//c.Header("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH")
-
 		/*
 		   c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		   c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
