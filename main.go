@@ -50,8 +50,8 @@ func main() {
 	r.Static("/swaggerui/", "swaggerui")
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://catsogramm.web.app", "https://catsogramm.web.app"}
-	// config.AllowAllOrigins = true
+	//config.AllowOrigins = []string{"http://catsogramm.web.app", "https://catsogramm.web.app"}
+	config.AllowAllOrigins = true
 	gr.Use(cors.New(config))
 	//HEROKU
 	r.Run("0.0.0.0:" + os.Getenv("PORT"))
