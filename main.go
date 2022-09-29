@@ -14,7 +14,7 @@ import (
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		c.Header("Access-Control-Allow-Origin", "https://catsogramm.web.app")
+		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-Control-Allow-Headers", "*")
 
 		//c.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
