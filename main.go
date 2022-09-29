@@ -46,6 +46,7 @@ func main() {
 
 	gr := r.Group("/api")
 
+	r.Use(CORSMiddleware())
 	gr.Use(CORSMiddleware())
 
 	gr.GET("/users", GetUsers)
