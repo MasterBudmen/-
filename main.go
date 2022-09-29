@@ -7,6 +7,7 @@ import (
 
 	database "main/database"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -48,6 +49,7 @@ func main() {
 
 	r.Static("/swaggerui/", "swaggerui")
 
+	gr.Use(cors.Default())
 	//HEROKU
 	r.Run("0.0.0.0:" + os.Getenv("PORT"))
 	//LOCAL
