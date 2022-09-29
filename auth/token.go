@@ -3,7 +3,6 @@ package auth
 import (
 	datebase "main/database"
 	"math/rand"
-	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -69,16 +68,7 @@ func TokenCheck(header string) (claims *Claims, validity bool, err error) {
 		return nil, false, nil
 	}
 
-	headerParts := strings.Split(header, " ")
-	if len(headerParts) != 2 {
-		return nil, false, nil
-	}
-
-	if headerParts[0] != "Bearer" {
-		return nil, false, nil
-	}
-
-	claims, err = ParseToken(headerParts[1])
+	claims, err = ParseToken(header)
 	if err != nil {
 		return nil, false, err
 	} else {
