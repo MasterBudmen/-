@@ -49,7 +49,6 @@ func main() {
 
 	r.Static("/swaggerui/", "swaggerui")
 
-	gr.Use(cors.Default())
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://catsogramm.web.app", "https://catsogramm.web.app"}
 	// config.AllowAllOrigins = true
