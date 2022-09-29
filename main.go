@@ -45,12 +45,13 @@ func main() {
 
 	r := gin.Default()
 
-	gr := r.Group("/api")
-
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://catsogramm.web.app", "https://catsogramm.web.app"}
+	config.AllowAllOrigins = true
 
 	r.Use(cors.New(config))
+
+	gr := r.Group("/api")
 
 	//r.Use(CORSMiddleware())
 	//gr.Use(CORSMiddleware())
