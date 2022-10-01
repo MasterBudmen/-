@@ -109,7 +109,7 @@ func GetPosts(c *gin.Context) {
 		if !exists {
 			rows, err = database.DB.Query("SELECT p.id, s.name, p.txt as text, i.image FROM dbo.posts p JOIN dbo.users s ON p.user_id = s.id LEFT JOIN dbo.images i ON p.image_id = i.id ORDER BY p.created_at DESC LIMIT $1 OFFSET $2", limit, offset)
 		} else {
-			rows, err = database.DB.Query("SELECT p.id, s.name, p.txt as text, i.image FROM dbo.posts p JOIN dbo.users s ON p.user_id = s.id LEFT JOIN dbo.images i ON p.image_id = i.id WHERE p.user_id = $1 ORDER BY p.created_at DESC LIMIT $2 OFFSET $3", user_id, limit)
+			rows, err = database.DB.Query("SELECT p.id, s.name, p.txt as text, i.image FROM dbo.posts p JOIN dbo.users s ON p.user_id = s.id LEFT JOIN dbo.images i ON p.image_id = i.id WHERE p.user_id = $1 ORDER BY p.created_at DESC LIMIT $2 OFFSET $3", user_id, limit, offset)
 		}
 
 		if err != nil {
