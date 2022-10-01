@@ -303,6 +303,7 @@
               "type": "integer",
               "example": 9
             }
+		  }
         ],
         "responses": {
           "200": {
