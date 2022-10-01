@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	_ "strconv"
 
 	database "main/database"
@@ -72,7 +73,7 @@ func main() {
 	r.Static("/swaggerui/", "swaggerui")
 
 	//HEROKU
-	//r.Run("0.0.0.0:" + os.Getenv("PORT"))
+	r.Run("0.0.0.0:" + os.Getenv("PORT"))
 	//LOCAL
-	r.Run(":8080")
+	//r.Run(":8080")
 }
