@@ -5,6 +5,7 @@ package main
 //)
 
 type User struct {
+	Id   string `db:"id" json:"id"`
 	Name string `db:"name" json:"name"`
 	Role string `db:"role" json:"role"`
 }
@@ -21,6 +22,7 @@ type UserRegister struct {
 
 type UserPostGET struct {
 	Post_id string `db:"id" form:"id" json:"id" xml:"id"`
+	User_Id string `db:"user_Id" form:"user_Id" json:"user_Id" xml:"user_Id"`
 	Name    string `db:"name" form:"name" json:"name" xml:"name"`
 	Text    string `db:"text" form:"text" json:"text" xml:"text"  binding:"required"`
 	Image   string `db:"Image" form:"Image" json:"Image" xml:"Image"`

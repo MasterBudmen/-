@@ -107,9 +107,9 @@ func GetPosts(c *gin.Context) {
 
 		user_id, exists := c.GetQuery("user_id")
 		if !exists {
-			rows, err = database.DB.Query("SELECT p.id, s.name, p.txt as text, i.image FROM dbo.posts p JOIN dbo.users s ON p.user_id = s.id LEFT JOIN dbo.images i ON p.image_id = i.id ORDER BY p.created_at DESC LIMIT $1 OFFSET $2", limit, offset)
+			rows, err = database.DB.Query("SELECT p.id, p.user_id, s.name, p.txt as text, i.image FROM dbo.posts p JOIN dbo.users s ON p.user_id = s.id LEFT JOIN dbo.images i ON p.image_id = i.id ORDER BY p.created_at DESC LIMIT $1 OFFSET $2", limit, offset)
 		} else {
-			rows, err = database.DB.Query("SELECT p.id, s.name, p.txt as text, i.image FROM dbo.posts p JOIN dbo.users s ON p.user_id = s.id LEFT JOIN dbo.images i ON p.image_id = i.id WHERE p.user_id = $1 ORDER BY p.created_at DESC LIMIT $2 OFFSET $3", user_id, limit, offset)
+			rows, err = database.DB.Query("SELECT p.id, p.user_id, s.name, p.txt as text, i.image FROM dbo.posts p JOIN dbo.users s ON p.user_id = s.id LEFT JOIN dbo.images i ON p.image_id = i.id WHERE p.user_id = $1 ORDER BY p.created_at DESC LIMIT $2 OFFSET $3", user_id, limit, offset)
 		}
 
 		if err != nil {
@@ -120,7 +120,7 @@ func GetPosts(c *gin.Context) {
 
 		for rows.Next() {
 			var post UserPostGET
-			if err := rows.Scan(&post.Post_id, &post.Name, &post.Text, &img); err != nil {
+			if err := rows.Scan(&post.Post_id, &post.User_Id, &post.Name, &post.Text, &img); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 				return
 			}
@@ -350,14 +350,14 @@ func GetUsers(c *gin.Context) {
 			offset = "0"
 		}
 
-		rows, err := database.DB.Query("SELECT name, role FROM dbo.users ORDER BY registered_at DESC LIMIT $1 OFFSET $2", limit, offset)
+		rows, err := database.DB.Query("SELECT id, name, role FROM dbo.users ORDER BY registered_at DESC LIMIT $1 OFFSET $2", limit, offset)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		}
 
 		for rows.Next() {
 			var user User
-			if err := rows.Scan(&user.Name, &user.Role); err != nil {
+			if err := rows.Scan(&user.Id, &user.Name, &user.Role); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 				return
 			}
