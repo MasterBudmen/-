@@ -54,19 +54,25 @@ func DBCheck(c *gin.Context) {
 }
 
 func Post(c *gin.Context) {
-	var post UserPost
-
 	authHeader := c.GetHeader("Authorization")
-
-	if err := c.ShouldBind(&post); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		return
-	}
 
 	claims, validity, _ := auth.TokenCheck(authHeader)
 
 	if validity {
-		_, err := database.DB.Exec("INSERT INTO dbo.posts (user_id, txt, created_at, updated_at) VALUES ($1, $2, $3, $3)", claims.User_Id, post.Text, time.Now())
+		var post UserPostPOST
+
+		if err := c.ShouldBind(&post); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			return
+		}
+
+		var err error
+		if post.Image_id == "" {
+			_, err = database.DB.Exec("INSERT INTO dbo.posts (user_id, txt, created_at, updated_at) VALUES ($1, $2, $3, $3)", claims.User_Id, post.Text, time.Now())
+		} else {
+			_, err = database.DB.Exec("INSERT INTO dbo.posts (user_id, txt, created_at, updated_at, image_id) VALUES ($1, $2, $3, $3, $4)", claims.User_Id, post.Text, time.Now(), post.Image_id)
+		}
+
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		} else {
@@ -84,7 +90,7 @@ func GetPosts(c *gin.Context) {
 	_, validity, _ := auth.TokenCheck(authHeader)
 
 	if validity {
-		var posts []UserPost
+		var posts []UserPostGET
 		limit, exists := c.GetQuery("limit")
 		if !exists {
 			limit = "10"
@@ -96,16 +102,21 @@ func GetPosts(c *gin.Context) {
 			offset = "0"
 		}
 
-		rows, err := database.DB.Query("SELECT p.id, s.name, p.txt as text FROM dbo.posts p JOIN dbo.users s ON p.user_id = s.id ORDER BY p.created_at DESC LIMIT $1 OFFSET $2", limit, offset)
+		rows, err := database.DB.Query("SELECT p.id, s.name, p.txt as text, i.image FROM dbo.posts p JOIN dbo.users s ON p.user_id = s.id LEFT JOIN dbo.images i ON p.image_id = i.id ORDER BY p.created_at DESC LIMIT $1 OFFSET $2", limit, offset)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		}
 
+		var img sql.NullString
+
 		for rows.Next() {
-			var post UserPost
-			if err := rows.Scan(&post.Post_id, &post.Name, &post.Text); err != nil {
+			var post UserPostGET
+			if err := rows.Scan(&post.Post_id, &post.Name, &post.Text, &img); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 				return
+			}
+			if img.Valid {
+				post.Image = img.String
 			}
 			posts = append(posts, post)
 		}
@@ -116,10 +127,6 @@ func GetPosts(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "invalid token"})
 	}
-}
-
-func Post_Delete(c *gin.Context) {
-
 }
 
 func Comment(c *gin.Context) {
@@ -193,32 +200,88 @@ func GetComments(c *gin.Context) {
 	}
 }
 
-func Comment_Delete(c *gin.Context) {
-
-}
-
-func Like_Post(c *gin.Context) {
-	var post UserPostLike
-
+func UploadImage(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
-
-	if err := c.ShouldBind(&post); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		return
-	}
 
 	claims, validity, _ := auth.TokenCheck(authHeader)
 
 	if validity {
+		var img Image
 
-		row := database.DB.QueryRow("SELECT user_id FROM dbo.posts_likes WHERE post_id = $1 AND user_id = $2", post.Post_id, claims.User_Id)
+		if err := c.ShouldBind(&img); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			return
+		}
+
+		stmt, err := database.DB.Prepare("INSERT INTO dbo.images (image, created_at, user_id) VALUES ($1, $2, $3) RETURNING id")
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			return
+		}
+
+		defer stmt.Close()
+
+		var id int
+
+		err = stmt.QueryRow(
+			img.Image,
+			time.Now(),
+			claims.User_Id,
+		).Scan(&id)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"message":  "image has been uploaded",
+				"image_id": id})
+		}
+
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "invalid token"})
+	}
+}
+
+func DownloadImage(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+
+	_, validity, _ := auth.TokenCheck(authHeader)
+
+	if validity {
+
+		id := c.Param("id")
+		var img string
+
+		row := database.DB.QueryRow("SELECT image FROM dbo.images WHERE id = $1", id)
+
+		err := row.Scan(&img)
+		if err == sql.ErrNoRows {
+			c.JSON(http.StatusNotFound, gin.H{"message": "image not found"})
+			return
+		} else {
+			c.JSON(http.StatusOK, gin.H{"image": img})
+		}
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "invalid token"})
+	}
+}
+
+func Like_Post(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+
+	claims, validity, _ := auth.TokenCheck(authHeader)
+
+	if validity {
+		id := c.Param("id")
+		row := database.DB.QueryRow("SELECT user_id FROM dbo.posts_likes WHERE post_id = $1 AND user_id = $2", id, claims.User_Id)
 
 		var user_id string
 		err := row.Scan(&user_id)
 		if err != sql.ErrNoRows {
 			c.JSON(http.StatusOK, gin.H{"message": "there is like already"})
 		} else {
-			_, err := database.DB.Exec("INSERT INTO dbo.posts_likes (user_id, post_id, created_at) VALUES ($1, $2, $3)", claims.User_Id, post.Post_id, time.Now())
+			_, err := database.DB.Exec("INSERT INTO dbo.posts_likes (user_id, post_id, created_at) VALUES ($1, $2, $3)", claims.User_Id, id, time.Now())
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			} else {
@@ -231,27 +294,23 @@ func Like_Post(c *gin.Context) {
 }
 
 func Like_Comment(c *gin.Context) {
-	var comment UserCommentLike
 
 	authHeader := c.GetHeader("Authorization")
-
-	if err := c.ShouldBind(&comment); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		return
-	}
 
 	claims, validity, _ := auth.TokenCheck(authHeader)
 
 	if validity {
 
-		row := database.DB.QueryRow("SELECT user_id FROM dbo.comments_likes WHERE comment_id = $1 AND user_id = $2", comment.Comment_id, claims.User_Id)
+		id := c.Param("id")
+
+		row := database.DB.QueryRow("SELECT user_id FROM dbo.comments_likes WHERE comment_id = $1 AND user_id = $2", id, claims.User_Id)
 
 		var user_id string
 		err := row.Scan(&user_id)
 		if err != sql.ErrNoRows {
 			c.JSON(http.StatusOK, gin.H{"message": "there is like already"})
 		} else {
-			_, err := database.DB.Exec("INSERT INTO dbo.comments_likes (user_id, comment_id, created_at) VALUES ($1, $2, $3)", claims.User_Id, comment.Comment_id, time.Now())
+			_, err := database.DB.Exec("INSERT INTO dbo.comments_likes (user_id, comment_id, created_at) VALUES ($1, $2, $3)", claims.User_Id, id, time.Now())
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			} else {

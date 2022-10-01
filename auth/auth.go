@@ -2,7 +2,7 @@ package auth
 
 import (
 	"database/sql"
-	datebase "main/database"
+	database "main/database"
 
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
@@ -10,7 +10,7 @@ import (
 
 func CheckAuth(username, password string) bool {
 
-	row := datebase.DB.QueryRow("SELECT password FROM dbo.users WHERE name = $1", username)
+	row := database.DB.QueryRow("SELECT password FROM dbo.users WHERE name = $1", username)
 
 	var hashPassword string
 	err := row.Scan(&hashPassword)

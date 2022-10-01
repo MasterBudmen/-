@@ -8,6 +8,9 @@
   "servers": [
     {
       "url": "https://catsogramm.herokuapp.com/api"
+    },
+    {
+      "url": "http://localhost:8080/api"
     }
   ],
   "tags": [
@@ -22,6 +25,10 @@
     {
       "name": "Comment",
       "description": "Комментарии"
+    },
+    {
+      "name": "Image",
+      "description": "Изображения"
     },
     {
       "name": "Metrics",
@@ -141,12 +148,97 @@
         ]
       }
     },
-    "/posts/create": {
+    "/images": {
+      "post": {
+        "tags": [
+          "Image"
+        ],
+        "summary": "Загрузка изображения",
+        "description": "Загрузка изображения в БД системы в виде байтов",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Image"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Изображение успешно загружено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image_id"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка при загрузке"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/images/{id}": {
+      "get": {
+        "tags": [
+          "Image"
+        ],
+        "summary": "Получение изображения",
+        "description": "Получение изображения в виде байтов",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Идентификатор изображения",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": "10"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Изображение успешно загружено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image_id"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка при загрузке"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/posts": {
       "post": {
         "tags": [
           "Post"
         ],
         "summary": "Создание поста",
+        "description": "Параметр image_id необязателен.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -175,46 +267,8 @@
             ]
           }
         ]
-      }
-    },
-    "/posts/like": {
-      "post": {
-        "tags": [
-          "Post"
-        ],
-        "summary": "Лайк поста",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Post_like"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Успешная установка лайка"
-          },
-          "400": {
-            "description": "Не указано сообщение"
-          },
-          "401": {
-            "description": "Невалидный токен"
-          }
-        },
-        "security": [
-          {
-            "JWT": [
-              "Bearer"
-            ]
-          }
-        ]
-      }
-    },
-    "/posts": {
-      "get": {
+      },
+	  "get": {
         "tags": [
           "Post"
         ],
@@ -268,7 +322,45 @@
         ]
       }
     },
-    "/comments/create": {
+    "/posts/{id}/like": {
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Лайк поста",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Идентификатор поста",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": "10"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешная установка лайка"
+          },
+          "400": {
+            "description": "Не указано сообщение"
+          },
+          "401": {
+            "description": "Невалидный токен"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/comments": {
       "post": {
         "tags": [
           "Comment"
@@ -302,46 +394,8 @@
             ]
           }
         ]
-      }
-    },
-    "/comments/like": {
-      "post": {
-        "tags": [
-          "Comment"
-        ],
-        "summary": "Лайк комментария",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Comment_like"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Успешная установка лайка"
-          },
-          "400": {
-            "description": "Не указано сообщение"
-          },
-          "401": {
-            "description": "Невалидный токен"
-          }
-        },
-        "security": [
-          {
-            "JWT": [
-              "Bearer"
-            ]
-          }
-        ]
-      }
-    },
-    "/comments": {
-      "get": {
+      },
+	  "get": {
         "tags": [
           "Comment"
         ],
@@ -405,6 +459,44 @@
         ]
       }
     },
+    "/comments/{id}/like": {
+      "post": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Лайк комментария",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Идентификатор комментария",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": "10"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешная установка лайка"
+          },
+          "400": {
+            "description": "Не указано сообщение"
+          },
+          "401": {
+            "description": "Невалидный токен"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      }
+    },
     "/app-check": {
       "get": {
         "tags": [
@@ -450,6 +542,24 @@
           }
         }
       },
+      "Image": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string",
+            "example": "4342sfdsfdsfds"
+          }
+        }
+      },
+      "Image_id": {
+        "type": "object",
+        "properties": {
+          "image_id": {
+            "type": "string",
+            "example": 5
+          }
+        }
+      },
       "Token": {
         "type": "object",
         "properties": {
@@ -469,15 +579,10 @@
           "text": {
             "type": "string",
             "example": "Всем приф"
-          }
-        }
-      },
-      "Post_like": {
-        "type": "object",
-        "properties": {
-          "post_id": {
+          },
+		  "image_id": {
             "type": "string",
-            "example": 1
+            "example": "2",
           }
         }
       },
@@ -506,15 +611,6 @@
             "example": "Всем приф"
           },
           "post_id": {
-            "type": "string",
-            "example": 1
-          }
-        }
-      },
-      "Comment_like": {
-        "type": "object",
-        "properties": {
-          "comment_id": {
             "type": "string",
             "example": 1
           }

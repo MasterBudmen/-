@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
 	_ "strconv"
 
 	database "main/database"
@@ -14,7 +13,7 @@ import (
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		c.Header("Access-Control-Allow-Origin", "https://catsogramm.web.app 	")
+		c.Header("Access-Control-Allow-Origin", "https://catsogramm.web.app")
 		c.Header("Access-Control-Allow-Headers", "*")
 
 		/*
@@ -53,16 +52,19 @@ func main() {
 	gr.POST("/users/register", Register)
 	gr.POST("/users/login", Login)
 
+	gr.POST("/images", UploadImage)
+	gr.GET("/images/:id", DownloadImage)
+
 	//gr.POST("/tokencheck", TokenParse)
 
 	gr.GET("/comments", GetComments)
 	gr.GET("/posts", GetPosts)
 
-	gr.POST("/posts/create", Post)
-	gr.POST("/comments/create", Comment)
+	gr.POST("/posts", Post)
+	gr.POST("/comments", Comment)
 
-	gr.POST("/posts/like", Like_Post)
-	gr.POST("/comments/like", Like_Comment)
+	gr.POST("/posts/:id/like", Like_Post)
+	gr.POST("/comments/:id/like", Like_Comment)
 
 	gr.GET("/app-check", AppCheck)
 	gr.GET("/db-check", DBCheck)
@@ -70,7 +72,7 @@ func main() {
 	r.Static("/swaggerui/", "swaggerui")
 
 	//HEROKU
-	r.Run("0.0.0.0:" + os.Getenv("PORT"))
+	//r.Run("0.0.0.0:" + os.Getenv("PORT"))
 	//LOCAL
-	//r.Run(":8080")
+	r.Run(":8080")
 }
