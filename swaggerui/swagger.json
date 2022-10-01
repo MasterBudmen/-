@@ -278,7 +278,7 @@
             "name": "limit",
             "in": "query",
             "description": "Ограничить количество выводимых постов",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "example": 10
@@ -288,12 +288,21 @@
             "name": "offset",
             "in": "query",
             "description": "Смещение выводимых постов",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "example": 0
             }
-          }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "Ограничение по пользователю",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 9
+            }
         ],
         "responses": {
           "200": {
