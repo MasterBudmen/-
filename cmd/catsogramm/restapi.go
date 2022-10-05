@@ -400,7 +400,7 @@ func Login(c *gin.Context) {
 	}
 }
 
-func TokenParse(c *gin.Context) {
+func ReadToken(c *gin.Context) {
 	var token Token
 	if err := c.ShouldBind(&token); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})

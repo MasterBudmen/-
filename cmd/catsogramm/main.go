@@ -48,7 +48,7 @@ func main() {
 	gr.POST("/images", UploadImage)
 	gr.GET("/images/:id", DownloadImage)
 
-	//gr.POST("/tokencheck", TokenParse)
+	//gr.POST("/tokencheck", ReadToken)
 
 	gr.GET("/comments", GetComments)
 	gr.GET("/posts", GetPosts)
