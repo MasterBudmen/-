@@ -1,8 +1,9 @@
-package main
+package restapi
 
 import (
 	"database/sql"
 	"main/internal/auth"
+	"main/internal/model"
 	"net/http"
 	_ "strconv"
 	"time"
@@ -14,7 +15,7 @@ import (
 )
 
 func Register(c *gin.Context) {
-	var user UserRegister
+	var user model.UserLoginRequest
 
 	if err := c.ShouldBind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -59,7 +60,7 @@ func Post(c *gin.Context) {
 	claims, validity, _ := auth.TokenCheck(authHeader)
 
 	if validity {
-		var post UserPostPOST
+		var post model.UserPostRequest
 
 		if err := c.ShouldBind(&post); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -90,7 +91,7 @@ func GetPosts(c *gin.Context) {
 	_, validity, _ := auth.TokenCheck(authHeader)
 
 	if validity {
-		var posts []UserPostGET
+		var posts []model.UserPostResponse
 		limit, exists := c.GetQuery("limit")
 		if !exists {
 			limit = "10"
@@ -119,7 +120,7 @@ func GetPosts(c *gin.Context) {
 		var img sql.NullString
 
 		for rows.Next() {
-			var post UserPostGET
+			var post model.UserPostResponse
 			if err := rows.Scan(&post.Post_id, &post.User_Id, &post.Login, &post.Text, &img); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 				return
@@ -139,7 +140,7 @@ func GetPosts(c *gin.Context) {
 }
 
 func Comment(c *gin.Context) {
-	var comment UserComment
+	var comment model.UserComment
 
 	authHeader := c.GetHeader("Authorization")
 
@@ -168,7 +169,7 @@ func GetComments(c *gin.Context) {
 	_, validity, _ := auth.TokenCheck(authHeader)
 
 	if validity {
-		var comments []UserComment
+		var comments []model.UserComment
 
 		post_id, exists := c.GetQuery("post_id")
 		if !exists {
@@ -193,7 +194,7 @@ func GetComments(c *gin.Context) {
 		}
 
 		for rows.Next() {
-			var comment UserComment
+			var comment model.UserComment
 			if err := rows.Scan(&comment.Comment_id, &comment.Post_id, &comment.Login, &comment.Text); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 				return
@@ -215,7 +216,7 @@ func UploadImage(c *gin.Context) {
 	claims, validity, _ := auth.TokenCheck(authHeader)
 
 	if validity {
-		var img Image
+		var img model.Image
 
 		if err := c.ShouldBind(&img); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -338,7 +339,7 @@ func GetUsers(c *gin.Context) {
 	_, validity, _ := auth.TokenCheck(authHeader)
 
 	if validity {
-		var users []User
+		var users []model.User
 		limit, exists := c.GetQuery("limit")
 		if !exists {
 			limit = "10"
@@ -356,7 +357,7 @@ func GetUsers(c *gin.Context) {
 		}
 
 		for rows.Next() {
-			var user User
+			var user model.User
 			if err := rows.Scan(&user.Id, &user.Login, &user.Role); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 				return
@@ -374,7 +375,7 @@ func GetUsers(c *gin.Context) {
 
 func Login(c *gin.Context) {
 
-	var user UserLogin
+	var user model.UserLoginRequest
 
 	if err := c.ShouldBind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -401,7 +402,7 @@ func Login(c *gin.Context) {
 }
 
 func ReadToken(c *gin.Context) {
-	var token Token
+	var token model.Token
 	if err := c.ShouldBind(&token); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 	} else {

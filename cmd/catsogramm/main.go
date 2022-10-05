@@ -4,7 +4,8 @@ import (
 	"log"
 	_ "strconv"
 
-	database "main/internal/database"
+	"main/internal/database"
+	"main/internal/restapi"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -33,6 +34,7 @@ func main() {
 	}
 
 	database.DB = database.InitDb()
+	defer database.DB.Close()
 
 	r := gin.Default()
 
@@ -41,26 +43,26 @@ func main() {
 	r.Use(CORSMiddleware())
 	gr.Use(CORSMiddleware())
 
-	gr.GET("/users", GetUsers)
-	gr.POST("/users/register", Register)
-	gr.POST("/users/login", Login)
+	gr.GET("/users", restapi.GetUsers)
+	gr.POST("/users/register", restapi.Register)
+	gr.POST("/users/login", restapi.Login)
 
-	gr.POST("/images", UploadImage)
-	gr.GET("/images/:id", DownloadImage)
+	gr.POST("/images", restapi.UploadImage)
+	gr.GET("/images/:id", restapi.DownloadImage)
 
 	//gr.POST("/tokencheck", ReadToken)
 
-	gr.GET("/comments", GetComments)
-	gr.GET("/posts", GetPosts)
+	gr.GET("/comments", restapi.GetComments)
+	gr.GET("/posts", restapi.GetPosts)
 
-	gr.POST("/posts", Post)
-	gr.POST("/comments", Comment)
+	gr.POST("/posts", restapi.Post)
+	gr.POST("/comments", restapi.Comment)
 
-	gr.POST("/posts/:id/like", Like_Post)
-	gr.POST("/comments/:id/like", Like_Comment)
+	gr.POST("/posts/:id/like", restapi.Like_Post)
+	gr.POST("/comments/:id/like", restapi.Like_Comment)
 
-	gr.GET("/app-check", AppCheck)
-	gr.GET("/db-check", DBCheck)
+	gr.GET("/app-check", restapi.AppCheck)
+	gr.GET("/db-check", restapi.DBCheck)
 
 	gr.StaticFile("./doc.json", "../../api/swagger.json")
 	r.Static("/swaggerui/", "../../web/swaggerui")
