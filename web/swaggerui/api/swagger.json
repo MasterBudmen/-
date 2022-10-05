@@ -1,0 +1,658 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Catsogramm - OpenAPI 3.0",
+    "description": "Документация API Catsogramm",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://catsogramm.herokuapp.com/api"
+    },
+    {
+      "url": "http://localhost:8080/api"
+    }
+  ],
+  "tags": [
+    {
+      "name": "User",
+      "description": "Пользователи"
+    },
+    {
+      "name": "Post",
+      "description": "Посты"
+    },
+    {
+      "name": "Comment",
+      "description": "Комментарии"
+    },
+    {
+      "name": "Image",
+      "description": "Изображения"
+    },
+    {
+      "name": "Metrics",
+      "description": "Метрики"
+    }
+  ],
+  "paths": {
+    "/users/login": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Авторизация",
+        "description": "Авторизация в системе и получение токена",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Успешная авторизация",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Не указано имя или пароль"
+          },
+          "401": {
+            "description": "Неверные имя пользователя или пароль"
+          }
+        }
+      }
+    },
+    "/users/register": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Регистрация",
+        "description": "Регистрация в системе",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Успешная регистрация"
+          },
+          "400": {
+            "description": "Пользователь уже существует"
+          },
+          "500": {
+            "description": "Ошибка при генерировании хеша пароля"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Вывод пользователей",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Ограничить количество выводимых пользователей",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": "10"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Смещение выводимых пользователей",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный запрос пользователей"
+          },
+          "401": {
+            "description": "Невалидный токен"
+          },
+          "500": {
+            "description": "Ошибка при запросе пользователей"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/images": {
+      "post": {
+        "tags": [
+          "Image"
+        ],
+        "summary": "Загрузка изображения",
+        "description": "Загрузка изображения в БД системы в виде байтов",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Image"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Изображение успешно загружено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image_id"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка при загрузке"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/images/{id}": {
+      "get": {
+        "tags": [
+          "Image"
+        ],
+        "summary": "Получение изображения",
+        "description": "Получение изображения в виде байтов",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Идентификатор изображения",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": "10"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Изображение успешно загружено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image_id"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка при загрузке"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/posts": {
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Создание поста",
+        "description": "Параметр image_id необязателен.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Успешное создание поста"
+          },
+          "400": {
+            "description": "Не указано сообщение"
+          },
+          "401": {
+            "description": "Невалидный токен"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      },
+	  "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Вывод постов",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Ограничить количество выводимых постов",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Смещение выводимых постов",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 0
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "Ограничение по пользователю",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 9
+            }
+		  }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный запрос постов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Posts"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Невалидный токен"
+          },
+          "500": {
+            "description": "Ошибка при запросе постов"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/posts/{id}/like": {
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Лайк поста",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Идентификатор поста",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": "10"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешная установка лайка"
+          },
+          "400": {
+            "description": "Не указано сообщение"
+          },
+          "401": {
+            "description": "Невалидный токен"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/comments": {
+      "post": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Создание комментария",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Comment"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Успешная установка лайка"
+          },
+          "400": {
+            "description": "Не указано сообщение"
+          },
+          "401": {
+            "description": "Невалидный токен"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      },
+	  "get": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Вывод комментариев",
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "query",
+            "description": "Выбрать пост",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Ограничить количество выводимых комментариев",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Смещение выводимых комментариев",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный запрос постов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comments"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Невалидный токен"
+          },
+          "500": {
+            "description": "Ошибка при запросе постов"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/comments/{id}/like": {
+      "post": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Лайк комментария",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Идентификатор комментария",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": "10"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешная установка лайка"
+          },
+          "400": {
+            "description": "Не указано сообщение"
+          },
+          "401": {
+            "description": "Невалидный токен"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/app-check": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "summary": "Проверка приложения",
+        "responses": {
+          "200": {
+            "description": "Приложение работает"
+          }
+        }
+      }
+    },
+    "/db-check": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "summary": "Проверка базы данных",
+        "responses": {
+          "200": {
+            "description": "База данных работает"
+          },
+          "500": {
+            "description": "База данных не работает"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Login": {
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string",
+            "example": "MasterBudmen"
+          },
+          "password": {
+            "type": "string",
+            "example": 123
+          }
+        }
+      },
+      "Image": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string",
+            "example": "4342sfdsfdsfds"
+          }
+        }
+      },
+      "Image_id": {
+        "type": "object",
+        "properties": {
+          "image_id": {
+            "type": "string",
+            "example": 5
+          }
+        }
+      },
+      "Token": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Authorized"
+          },
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cC..."
+          }
+        }
+      },
+      "Post": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "example": "Всем приф"
+          },
+		  "image_id": {
+            "type": "string",
+            "example": "2",
+          }
+        }
+      },
+      "Posts": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": 15
+          },
+          "login": {
+            "type": "string",
+            "example": "MasterBudmen"
+          },
+          "text": {
+            "type": "string",
+            "example": "Всем приф"
+          }
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "example": "Всем приф"
+          },
+          "post_id": {
+            "type": "string",
+            "example": 1
+          }
+        }
+      },
+      "Comments": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": 1
+          },
+          "login": {
+            "type": "string",
+            "example": "MasterBudmen"
+          },
+          "text": {
+            "type": "string",
+            "example": "Всем приф"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "JWT": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  }
+}
